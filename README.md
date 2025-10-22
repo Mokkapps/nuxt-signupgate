@@ -57,60 +57,49 @@ export default defineNuxtConfig({
   - `'low'` - Block low, medium, and high-risk subjects
   - `'none'` - Don't block any subjects (monitoring only)
 
-## API Endpoint
 
-The module automatically adds a server endpoint to check emails, domains, or IP addresses:
 
-### `GET /api/signupgate/check`
+## Server auto-import: checkRiskLevel
 
-Check if a subject (email, domain, or IP address) should be blocked based on risk level.
+The module exposes a server-side helper `checkRiskLevel` which is auto-imported and available in your server routes (no import required). Use this when you want to call SignupGate from server middleware or API routes directly.
 
-#### Query Parameters
+Signature (approx):
 
-- `q` (required) - The subject to check (email, domain, or IP address)
+```ts
+// available automatically in server context
+// async function checkRiskLevel(event: H3Event, q: string)
+```
 
-#### Example Request
+What it does:
 
-```typescript
-// In your component or composable
+- Validates the input (`q`) — must be a non-empty string (email, domain or IP).
+- Calls the SignupGate API using the private API key from runtime config.
+- Throws a 500 error when the upstream API request fails.
+- Throws a 403 when the subject should be blocked according to your configured `riskLevel`.
+- Returns an object with `subject`, `subjectType`, and `riskLevel` when successful.
+
+Example server route using the auto-imported helper:
+
+```ts
+export default defineEventHandler(async (event) => {
+  // no import required — `checkRiskLevel` is auto-imported by the module
+  const q = 'example@domain.com'
+  const result = await checkRiskLevel(event, q)
+
+  // result -> { subject: string, subjectType: string, riskLevel: 'none'|'low'|'medium'|'high' }
+  return result
+})
+```
+
+Client usage
+
+For client-side calls (from components or composables), continue to use the provided API endpoint `GET /api/signupgate/check` which performs the same check server-side for you. Example:
+
+```ts
 const { data, error } = await useFetch('/api/signupgate/check', {
   query: { q: 'example@domain.com' }
 })
 ```
-
-#### Response
-
-**Success (200):**
-```json
-{
-  "subject": "example@domain.com",
-  "subjectType": "email",
-  "riskLevel": "low"
-}
-```
-
-**Blocked (403):**
-```json
-{
-  "statusCode": 403,
-  "statusMessage": "Blocked due to high risk level."
-}
-```
-
-**Error (500):**
-```json
-{
-  "statusCode": 500,
-  "statusMessage": "SignupGate API request failed."
-}
-```
-
-#### Risk Levels
-
-- `none` - No risk detected
-- `low` - Low risk detected
-- `medium` - Medium risk detected
-- `high` - High risk detected
 
 ## Contribution
 

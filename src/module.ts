@@ -1,4 +1,4 @@
-import { defineNuxtModule, addServerHandler, createResolver, logger } from '@nuxt/kit'
+import { defineNuxtModule, addServerHandler, createResolver, logger, addServerImports } from '@nuxt/kit'
 import { defu } from 'defu'
 
 // Module options TypeScript interface definition
@@ -39,6 +39,17 @@ export default defineNuxtModule<ModuleOptions>({
     runtimeConfig._signupGateConfig = {
       riskLevel: _nuxt.options.runtimeConfig.public.signupGate.riskLevel,
     } as { riskLevel: SignupGateRiskLevel }
+
+    addServerImports([
+      {
+        name: 'checkRiskLevel',
+        from: resolver.resolve('runtime/server/utils/checkRiskLevel'),
+      },
+      {
+        name: 'checkRiskLevelSchema',
+        from: resolver.resolve('runtime/server/utils/checkRiskLevel.schema'),
+      },
+    ])
 
     addServerHandler({
       route: '/api/signupgate/check',

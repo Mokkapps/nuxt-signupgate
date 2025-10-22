@@ -1,6 +1,5 @@
 import { defineEventHandler, getValidatedQuery } from 'h3'
-import { checkRiskLevel } from '../../utils/checkRiskLevel'
-import { checkRiskLevelSchema } from '../../utils/checkRiskLevel.schema'
+import { checkRiskLevel, checkRiskLevelSchema } from '#imports'
 
 export default defineEventHandler(async (event) => {
   const { q } = await getValidatedQuery(event, checkRiskLevelSchema.parse)

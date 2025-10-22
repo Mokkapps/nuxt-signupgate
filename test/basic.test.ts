@@ -42,4 +42,12 @@ describe('ssr', async () => {
       riskLevel: 'low',
     })
   })
+
+  describe('own server route', () => {
+    it('returns error if signup request was not successful', async () => {
+      const response = await fetch('/api/signupgate/check?q=fail@example.com')
+      expect(response.status).toBe(500)
+      expect(response.statusText).toBe('SignupGate API request failed.')
+    })
+  })
 })
