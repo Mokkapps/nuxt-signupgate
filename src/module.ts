@@ -12,7 +12,7 @@ export interface ModuleOptions {
    */
   riskLevel: SignupGateRiskLevel
   /**
-   * Disable the IP address checking middleware.
+   * Disable the IP address checking middleware for API routes.
    *
    * @default false
    */
