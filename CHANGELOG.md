@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.0
+
+[compare changes](https://github.com/Mokkapps/nuxt-signupgate/compare/v1.1.0...v1.2.0)
+
+### 🚀 Enhancements
+
+- Add server middleware ([850e76c](https://github.com/Mokkapps/nuxt-signupgate/commit/850e76c))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v1.1.0
 
 [compare changes](https://github.com/Mokkapps/nuxt-signupgate/compare/v1.0.1...v1.1.0)
