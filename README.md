@@ -56,8 +56,35 @@ export default defineNuxtConfig({
   - `'medium'` - Block medium and high-risk subjects
   - `'low'` - Block low, medium, and high-risk subjects
   - `'none'` - Don't block any subjects (monitoring only)
+- `disableIpAddressServerMiddleware` (default: `false`) - Disable the automatic IP address checking middleware
 
+## Automatic IP Address Checking
 
+By default, the module includes a server middleware that automatically checks the IP address of every incoming request against SignupGate. This provides protection at the infrastructure level without requiring manual implementation in your routes.
+
+### How It Works
+
+The middleware:
+1. Extracts the IP address from each incoming request
+2. Checks it against the SignupGate API
+3. Blocks the request (returns 403) if the IP is flagged at or above your configured `riskLevel`
+4. Allows the request to proceed if the IP is safe
+
+### Disabling the Middleware
+
+If you prefer to manually control when SignupGate checks are performed, you can disable the automatic middleware:
+
+```typescript
+export default defineNuxtConfig({
+  modules: ['nuxt-signupgate'],
+  signupGate: {
+    riskLevel: 'high',
+    disableIpAddressServerMiddleware: true
+  }
+})
+```
+
+When disabled, you can still use the `checkRiskLevel` helper function in your own server routes and middleware.
 
 ## Server auto-import: checkRiskLevel
 

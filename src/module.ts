@@ -11,6 +11,12 @@ export interface ModuleOptions {
    * @default high
    */
   riskLevel: SignupGateRiskLevel
+  /**
+   * Disable the IP address checking middleware.
+   *
+   * @default false
+   */
+  disableIpAddressServerMiddleware?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -21,6 +27,7 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {
     riskLevel: 'high',
+    disableIpAddressServerMiddleware: false,
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -36,9 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // add config to runtime, only usable in server
     const runtimeConfig = _nuxt.options.runtimeConfig
-    runtimeConfig._signupGateConfig = {
-      riskLevel: _nuxt.options.runtimeConfig.public.signupGate.riskLevel,
-    } as { riskLevel: SignupGateRiskLevel }
+    runtimeConfig._signupGateConfig = { ..._options } as ModuleOptions
 
     addServerImports([
       {
@@ -54,6 +59,10 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       route: '/api/signupgate/check',
       handler: resolver.resolve('./runtime/server/api/signupgate/check.get'),
+    })
+
+    addServerHandler({
+      handler: resolver.resolve('./runtime/server/middleware/check'),
     })
   },
 })
