@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.2
+
+[compare changes](https://github.com/Mokkapps/nuxt-signupgate/compare/v1.2.1...v1.2.2)
+
+### 🩹 Fixes
+
+- Revert automatic server middleware ([93e0fde](https://github.com/Mokkapps/nuxt-signupgate/commit/93e0fde))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v1.2.1
 
 [compare changes](https://github.com/Mokkapps/nuxt-signupgate/compare/v1.2.0...v1.2.1)
