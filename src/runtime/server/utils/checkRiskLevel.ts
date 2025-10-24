@@ -12,7 +12,7 @@ interface SignupGateCheckResponse {
   success: boolean
 }
 
-const LOGGER_PREFIX = '[signupgate/check]:'
+const LOGGER_PREFIX = '[nuxt-signupgate]:'
 
 export const checkRiskLevel = async (event: H3Event, q: string) => {
   const { private: { signupGateApiKey }, _signupGateConfig: { riskLevel } } = useRuntimeConfig(event)
@@ -30,7 +30,7 @@ export const checkRiskLevel = async (event: H3Event, q: string) => {
   })
 
   if (!signupGateCheckResponse.success) {
-    consola.error(`${LOGGER_PREFIX} SignupGate API request failed for query: ${q}`)
+    consola.error(`${LOGGER_PREFIX} Request failed for query: ${q}`)
     throw createError({
       statusCode: 500,
       statusMessage: 'SignupGate API request failed.',

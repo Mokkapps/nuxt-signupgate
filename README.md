@@ -56,48 +56,12 @@ export default defineNuxtConfig({
   - `'medium'` - Block medium and high-risk subjects
   - `'low'` - Block low, medium, and high-risk subjects
   - `'none'` - Don't block any subjects (monitoring only)
-- `disableIpAddressServerMiddleware` (default: `false`) - Disable the automatic IP address checking middleware
-
-## Automatic IP Address Checking
-
-By default, the module includes a server middleware that automatically checks the IP address of every incoming request against SignupGate. This provides protection at the infrastructure level without requiring manual implementation in your routes.
-
-### How It Works
-
-The middleware:
-1. Extracts the IP address from each incoming request
-2. Checks it against the SignupGate API
-3. Blocks the request (returns 403) if the IP is flagged at or above your configured `riskLevel`
-4. Allows the request to proceed if the IP is safe
-
-### Disabling the Middleware
-
-If you prefer to manually control when SignupGate checks are performed, you can disable the automatic middleware:
-
-```typescript
-export default defineNuxtConfig({
-  modules: ['nuxt-signupgate'],
-  signupGate: {
-    riskLevel: 'high',
-    disableIpAddressServerMiddleware: true
-  }
-})
-```
-
-When disabled, you can still use the `checkRiskLevel` helper function in your own server routes and middleware.
 
 ## Server auto-import: checkRiskLevel
 
 The module exposes a server-side helper `checkRiskLevel` which is auto-imported and available in your server routes (no import required). Use this when you want to call SignupGate from server middleware or API routes directly.
 
-Signature (approx):
-
-```ts
-// available automatically in server context
-// async function checkRiskLevel(event: H3Event, q: string)
-```
-
-What it does:
+### What it does:
 
 - Validates the input (`q`) — must be a non-empty string (email, domain or IP).
 - Calls the SignupGate API using the private API key from runtime config.
@@ -118,7 +82,33 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-Client usage
+### Check IP address risk level
+
+If you want to check the risk level of the request's IP address, you can use the `getRequestIP` helper from `h3` to get the IP from the request and pass it to `checkRiskLevel`:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const ip = getRequestIP(event)
+  if (ip) {
+    await checkRiskLevel(event, ip)
+  }
+})
+````
+
+### Check domain risk level
+
+If you want to check the risk level of the request's referer domain, you can use the `getRequestHeader` helper from `h3` to get the `referer` header and pass it to `checkRiskLevel`:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const referer = getRequestHeader(event, 'referer')
+  if (referer) {
+    await checkRiskLevel(event, referer)
+  }
+})
+````
+
+## Client usage
 
 For client-side calls (from components or composables), continue to use the provided API endpoint `GET /api/signupgate/check` which performs the same check server-side for you. Example:
 
